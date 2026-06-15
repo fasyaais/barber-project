@@ -5,6 +5,6 @@ import AdminLayout from '@/layouts/AdminLayout.vue';
 
 <template>
     <AdminLayout>
-        feture hime
+        feture home
     </AdminLayout>
 </template>

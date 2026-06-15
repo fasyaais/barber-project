@@ -1,33 +1,42 @@
+<script lang="ts">
+import AdminLayout from '@/layouts/AdminLayout.vue';
+import admin from '@/routes/admin';
+import { Textarea } from '@/components/ui/textarea';
+
+export default {
+  layout: AdminLayout
+}
+</script>
+
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { User } from '@/types/user';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet, FieldTitle } from '@/components/ui/field';
 
 const props = defineProps<{
-  users: User[],
+  users: any[],
 }>();
 
 const page = usePage();
 
 const form = useForm<{
-  name: string | null,
-  user_id: string | null,
-  locate: string | null,
-  img: File | null,
+  name: string  | undefined,
+  user_id: string | undefined,
+  locate: string | undefined,
+  img: File | undefined,
 }>({
-  name: null,
-  user_id: null,
-  locate: null,
-  img: null,
+  name: undefined,
+  user_id: undefined,
+  locate: undefined,
+  img: undefined,
 });
 
 
@@ -76,14 +85,6 @@ const previewImage = (event: Event) => {
 
 </script>
 
-<script lang="ts">
-import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Textarea } from '@/components/ui/textarea';
-
-export default {
-  layout: AdminLayout
-}
-</script>
 
 <template>
   <Card>
@@ -218,6 +219,11 @@ export default {
               >
                 {{ form.processing ? 'Menyimpan...' : 'Tambah' }}
               </Button>
+              <Link :href="admin.merchants.index()">
+                <Button type="button" as="true" variant="destructive">
+                Batal
+                </Button>
+              </Link>
             </Field>
           </FieldSet>
         </FieldGroup>

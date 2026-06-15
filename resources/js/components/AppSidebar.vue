@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
+import {Link} from "@inertiajs/vue3"
 
 import {
   Collapsible,
@@ -37,7 +38,6 @@ import {
 import users from "@/routes/admin/users";
 import merchants from "@/routes/admin/merchants";
 import admin from "@/routes/admin";
-import { Link } from "@inertiajs/vue3";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
@@ -150,47 +150,21 @@ const data = {
 <template>
   <Sidebar v-bind="props">
     <SidebarHeader>
-      <h1>Tampan</h1>
+      <SearchForm />
     </SidebarHeader>
     <SidebarContent>
-      <SidebarGroup>
-        <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <component :is="LayoutDashboard" />
-                <Link :href="admin.dashboard().url">Dashboard</Link>
+      <SidebarGroup v-for="item in data.navMain" :key="item.title">
+        <SidebarGroupLabel>{{ item.title }}</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem v-for="childItem in item.items" :key="childItem.title">
+              <SidebarMenuButton as-child :is-active="false">
+                <Link :href="childItem.url">{{ childItem.title }}</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-        <Collapsible
-            v-for="item in data.navMain"
-            :key="item.title"
-            as-child
-            :default-open="item.isActive"
-            class="group/collapsible"
-        >
-            <SidebarMenuItem>
-            <CollapsibleTrigger as-child>
-                <SidebarMenuButton :tooltip="item.title">
-                <component :is="item.icon" v-if="item.icon" />
-                <span>{{ item.title }}</span>
-                <ChevronRight class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-                <SidebarMenuSub>
-                <SidebarMenuSubItem v-for="subItem in item.items" :key="subItem.title">
-                    <SidebarMenuSubButton as-child>
-                    <Link :href="subItem.url">
-                        <span>{{ subItem.title }}</span>
-                    </Link>
-                    </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-                </SidebarMenuSub>
-            </CollapsibleContent>
-            </SidebarMenuItem>
-        </Collapsible>
-        </SidebarMenu>
-    </SidebarGroup>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
     </SidebarContent>
     <SidebarRail />
   </Sidebar>

@@ -1,13 +1,12 @@
 import admin from '@/routes/admin'
-import { Merchant } from '@/types/merchant'
 import { Link, router } from '@inertiajs/vue3'
 import { ColumnDef } from '@tanstack/vue-table'
 import { h } from 'vue'
 import AlertError from '../alert/AlertDelete.vue'
-import merchants from '@/routes/admin/merchants'
 import { Button } from '../ui/button'
+import { Product } from '@/types/product.js'
 
-export const columns: ColumnDef<Merchant>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     id: 'nomor',
     header: () => h('div',{class:"text-center"},' '),
@@ -19,9 +18,9 @@ export const columns: ColumnDef<Merchant>[] = [
     cell: ({row}) => h('div', { class: 'text-left font-medium' }, row.getValue('name') ),
   },
   {
-    accessorKey: 'fullname',
+    accessorKey: 'image',
     header: ()=> h('div',{class: "text-center"},'Pemilik'),
-    cell: ({ row }) => h('div', { class: 'capitalize text-center' }, row.getValue('fullname')),
+    cell: ({ row }) => h('div', { class: 'capitalize text-center' }, row.getValue('image')),
   },
   {
     id: "action",
