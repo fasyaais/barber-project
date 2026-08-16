@@ -23,5 +23,13 @@ class DatabaseSeeder extends Seeder
             'password' => $hashed,
             'role' => 'admin',
         ]);
+
+        $this->call([
+            UserSeeder::class,
+            MerchantSeeder::class,
+            PositionSeeder::class,
+            JobSeeder::class,
+            ServiceSeeder::class,
+        ]);
     }
 }

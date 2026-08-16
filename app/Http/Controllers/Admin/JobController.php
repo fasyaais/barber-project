@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Job;
+use App\Models\Merchant;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,9 +16,15 @@ class JobController extends Controller
      */
     public function index()
     {
-        $data = Job::all();
-        return Inertia::render('admin/jobs/Index',[
+        $data = Job::with(['merchant', 'position'])->get();
+
+        return Inertia::render('admin/jobs/Index', [
             'data' => $data,
+            'breadcrumbs' => [
+                [
+                    'name' => 'Pekerjaan',
+                ],
+            ],
         ]);
     }
 
@@ -25,7 +33,22 @@ class JobController extends Controller
      */
     public function create()
     {
-        //
+        $merchants = Merchant::select('id', 'name', 'locate')->get();
+        $positions = Position::select('id', 'name')->get();
+
+        return Inertia::render('admin/jobs/Create', [
+            'merchants' => $merchants,
+            'positions' => $positions,
+            'breadcrumbs' => [
+                [
+                    'href' => route('admin.jobs.index'),
+                    'name' => 'Pekerjaan',
+                ],
+                [
+                    'name' => 'Tambah',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -33,7 +56,18 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $req = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'position_id' => 'nullable|exists:positions,id',
+            'description' => 'required|string',
+            'slot' => 'required|numeric',
+            'due_date' => 'required|date',
+        ]);
+
+        Job::create($req);
+
+        return to_route('admin.jobs.index');
     }
 
     /**
@@ -49,7 +83,24 @@ class JobController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = Job::with(['merchant', 'position'])->findOrFail($id);
+        $merchants = Merchant::select('id', 'name', 'locate')->get();
+        $positions = Position::select('id', 'name')->get();
+
+        return Inertia::render('admin/jobs/Edit', [
+            'data' => $data,
+            'merchants' => $merchants,
+            'positions' => $positions,
+            'breadcrumbs' => [
+                [
+                    'href' => route('admin.jobs.index'),
+                    'name' => 'Pekerjaan',
+                ],
+                [
+                    'name' => 'Edit',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -57,7 +108,18 @@ class JobController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $req = $request->validate([
+            'merchant_id' => 'required|exists:merchants,id',
+            'position_id' => 'nullable|exists:positions,id',
+            'description' => 'required|string',
+            'slot' => 'required|numeric',
+            'due_date' => 'required|date',
+        ]);
+
+        $job = Job::findOrFail($id);
+        $job->update($req);
+
+        return to_route('admin.jobs.index')->with('success', 'Berhasil memperbarui lowongan pekerjaan.');
     }
 
     /**
@@ -65,6 +127,9 @@ class JobController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $job = Job::findOrFail($id);
+        $job->delete();
+
+        return to_route('admin.jobs.index')->with('success', 'Berhasil menghapus lowongan pekerjaan.');
     }
 }

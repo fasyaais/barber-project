@@ -13,21 +13,26 @@ class Job extends Model
         'position_id',
         'merchant_id',
         'description',
+        'type',
+        'salary',
+        'loc',
         'slot',
         'status',
         'due_date',
     ];
 
-    public function position(){
-        return $this->belongsTo(Position::class,'position_id');
-    }
-
-    public function merchant(){
-        return $this->belongsTo(Merchant::class,'merchant_id');
-    }
-
-    public function application()
+    public function position()
     {
-        return $this->hasMany(Application::class);
+        return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
+
+    public function pelamar()
+    {
+        return $this->hasMany(Pelamar::class);
     }
 }

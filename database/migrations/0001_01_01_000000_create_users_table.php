@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->timestamps();
         });
+
         Schema::create('merchants',function(Blueprint $table){
             $table->id();
             $table->string('name')->unique();

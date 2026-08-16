@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -12,7 +14,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();
+
+        return Inertia::render('admin/users/Index', [
+            'data' => $users,
+            'breadcrumbs' => [
+                [
+                    'name' => 'Pengguna',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -20,7 +31,17 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('admin/users/Create', [
+            'breadcrumbs' => [
+                [
+                    'href' => route('admin.users.index'),
+                    'name' => 'Pengguna',
+                ],
+                [
+                    'name' => 'Tambah',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -28,7 +49,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'fullname' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'no_whatsapp' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'in:admin,owner'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        User::create($validated);
+
+        return to_route('admin.users.index')->with('success', 'Berhasil menambahkan pengguna baru.');
     }
 
     /**

@@ -1,28 +1,24 @@
 <script lang="ts" setup>
 import admin from '@/routes/admin';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb';
+import type { PageProps } from '@inertiajs/core';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import type { PageProps } from '@inertiajs/core'
-
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb';
 
 type BreadcrumbItem = {
-  name: string
-  href?: string
-}
+    name: string;
+    href?: string;
+};
 
 interface CustomPageProps extends PageProps {
-  breadcrumbs?: BreadcrumbItem[]
+    breadcrumbs?: BreadcrumbItem[];
 }
 
 const page = usePage<CustomPageProps>();
 
 const breadcrumbs = computed<BreadcrumbItem[]>(() => {
-    return page.props.breadcrumbs ?? []
-})
-
-console.log(breadcrumbs.value)
-
+    return page.props.breadcrumbs ?? [];
+});
 </script>
 
 <template>
@@ -30,33 +26,28 @@ console.log(breadcrumbs.value)
         <BreadcrumbList>
             <BreadcrumbItem>
                 <BreadcrumbLink as-child>
-                    <Link :href="admin.dashboard()">
-                        Dashboard
-                    </Link>
+                    <Link :href="admin.dashboard()"> Dashboard </Link>
                 </BreadcrumbLink>
             </BreadcrumbItem>
-            <template
-                v-for="(item, index) in breadcrumbs"
-                :key="index"
-            >
+            <template v-for="(item, index) in breadcrumbs" :key="index">
                 <BreadcrumbSeparator class="hidden md:block" />
 
                 <BreadcrumbItem>
                     <template v-if="item.href">
                         <BreadcrumbLink as-child>
-                        <Link :href="item.href">
-                            {{ item.name }}
-                        </Link>
+                            <Link :href="item.href">
+                                {{ item.name }}
+                            </Link>
                         </BreadcrumbLink>
                     </template>
 
                     <template v-else>
                         <BreadcrumbPage>
-                        {{ item.name }}
+                            {{ item.name }}
                         </BreadcrumbPage>
                     </template>
                 </BreadcrumbItem>
-          </template>
+            </template>
         </BreadcrumbList>
     </Breadcrumb>
 </template>

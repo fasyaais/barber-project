@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PositionController extends Controller
 {
@@ -12,7 +13,13 @@ class PositionController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('admin/positions/Index', [
+            'breadcrumbs' => [
+                [
+                    'name' => 'Posisi',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -20,7 +27,17 @@ class PositionController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('admin/positions/Create', [
+            'breadcrumbs' => [
+                [
+                    'href' => route('admin.positions.index'),
+                    'name' => 'Posisi',
+                ],
+                [
+                    'name' => 'Tambah',
+                ],
+            ],
+        ]);
     }
 
     /**

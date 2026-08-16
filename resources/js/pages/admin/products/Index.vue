@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { columns } from '@/components/merchants/column';
-import DataTable from '@/components/merchants/data-table.vue';
+import { columns } from '@/components/products/column';
+import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/ui/data-table';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Merchant } from '@/types/merchant';
-import { usePage } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
+import products from '@/routes/admin/products';
+import { Product } from '@/types/product';
+import { Link } from '@inertiajs/vue3';
+import { Plus } from 'lucide-vue-next';
 
 defineOptions({ layout: AdminLayout });
 
-const props = defineProps<{
-    data : Merchant[]
+defineProps<{
+    data: Product[];
 }>();
-
-const page = usePage()
-
-onMounted(() => {
-    console.log(page.url);
-});
-
-console.log(page.component.split('/'))
-
 </script>
 
 <template>
-    <div class="container py-10 mx-auto">
-        <DataTable :columns="columns" :data="props.data" />
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Produk</h1>
+                <p class="text-sm text-muted-foreground">Kelola daftar produk barbershop Anda.</p>
+            </div>
+            <Button as-child>
+                <Link :href="products.create()">
+                    <Plus /> Tambah Produk
+                </Link>
+            </Button>
+        </div>
+        <div class="rounded-xl border bg-card p-4 text-card-foreground shadow-sm">
+            <DataTable :columns="columns" :data="data" search-key="name" search-placeholder="Cari produk..." />
+        </div>
     </div>
-    <!-- <div>
-        <ul>
-            <li v-for="row in data" :key="row.id">{{ row.name }} kw</li>
-        </ul>
-    </div> -->
 </template>

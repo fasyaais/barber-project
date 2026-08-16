@@ -15,36 +15,38 @@ class MerchantController extends Controller
      */
     public function index()
     {
-        $data = Merchant::select(['merchants.name','merchants.id','merchants.user_id','users.fullname as fullname','users.id as user_id'])->leftJoin('users','merchants.user_id','=','users.id')->orderByDesc('merchants.created_at')->get();
+        $data = Merchant::select(['merchants.name', 'merchants.id', 'merchants.user_id', 'users.fullname as fullname', 'users.id as user_id'])->leftJoin('users', 'merchants.user_id', '=', 'users.id')->orderByDesc('merchants.created_at')->get();
+
         // dd($data->first());
-        return Inertia::render('admin/merchants/Index',[
-            'data' =>$data,
+        return Inertia::render('admin/merchants/Index', [
+            'data' => $data,
             'breadcrumbs' => [
                 [
-                    'name' => "Gerai"
+                    'name' => 'Gerai',
                 ],
-            ]
+            ],
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
-    */
+     */
     public function create()
     {
         $users = User::all();
+
         // dd($user);
-        return Inertia::render('admin/merchants/Create',[
+        return Inertia::render('admin/merchants/Create', [
             'users' => $users,
             'breadcrumbs' => [
                 [
                     'href' => route('admin.merchants.index'),
-                    'name' => "Gerai"
+                    'name' => 'Gerai',
                 ],
                 [
-                    'name' => "Edit"
+                    'name' => 'Tambah',
                 ],
-            ]
+            ],
         ]);
     }
 
@@ -55,10 +57,11 @@ class MerchantController extends Controller
     {
         // dd($request->all());
         $validated = $request->validate([
-            'name' => ['string','required','min:10'],
-            'user_id' => ['exists:users,id','required'],
-            'locate' => ['string','required'],
-            'img'=>['image','required','min:10']
+            'name' => ['string', 'required', 'min:10'],
+            'user_id' => ['exists:users,id', 'required'],
+            'locate' => ['string', 'required'],
+            'maps_link' => ['nullable', 'url'],
+            'img' => ['image', 'required', 'min:10'],
         ]);
         try {
             if ($request->hasFile('img')) {
@@ -68,9 +71,11 @@ class MerchantController extends Controller
             Merchant::create($validated);
         } catch (\Throwable $th) {
             dd($th);
-            return back()->with('error','Gagal menambahkan gerai baru.');
+
+            return back()->with('error', 'Gagal menambahkan gerai baru.');
         }
-        return to_route('admin.merchants.index')->with('success','Berhasil menambahkan gerai baru.');
+
+        return to_route('admin.merchants.index')->with('success', 'Berhasil menambahkan gerai baru.');
     }
 
     /**
@@ -88,10 +93,20 @@ class MerchantController extends Controller
     {
         $data = Merchant::find($id);
         $users = User::all();
-        $data->img = asset('storage/' . $data->img);
-        return Inertia::render('admin/merchants/Edit',[
-            'data'=> $data,
-            'users' =>$users
+        $data->img = asset('storage/'.$data->img);
+
+        return Inertia::render('admin/merchants/Edit', [
+            'data' => $data,
+            'users' => $users,
+            'breadcrumbs' => [
+                [
+                    'href' => route('admin.merchants.index'),
+                    'name' => 'Gerai',
+                ],
+                [
+                    'name' => 'Edit',
+                ],
+            ],
         ]);
     }
 
@@ -100,7 +115,29 @@ class MerchantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $merchant = Merchant::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['string', 'required', 'min:10'],
+            'user_id' => ['exists:users,id', 'required'],
+            'locate' => ['string', 'required'],
+            'maps_link' => ['nullable', 'url'],
+        ]);
+
+        try {
+            if ($request->hasFile('img')) {
+                $request->validate(['img' => ['image']]);
+                $path = $request->file('img')->store('merchants', 'public');
+                $validated['img'] = $path;
+            }
+            $merchant->update($validated);
+        } catch (\Throwable $th) {
+            dd($th);
+
+            return back()->with('error', 'Gagal mengubah gerai.');
+        }
+
+        return to_route('admin.merchants.index')->with('success', 'Berhasil mengubah gerai.');
     }
 
     /**
